@@ -53,7 +53,6 @@ Merry Christmas!"""
 def get_family_info(family_filename):
     family = {}
     print("Checking family info (names, email addresses)...")
-    check1_errors = 0
     with open(family_filename, "r") as family_file:
         # please note that the email regular expression used below is very basic!
         email_regex = "^[A-Za-z0-9]+[\._]?[A-Za-z0-9]+[@]\w+[.]\w{2,3}$"
@@ -70,10 +69,8 @@ def get_family_info(family_filename):
                 print(f" ! duplicate (key) name found in list: {key_name}")
                 exit()
             elif to_address == "":
-                check1_errors += 1
                 print(f" ? {key_name} [{to_name}]: missing email address")
             elif not re.search(email_regex, to_address):
-                check1_errors += 1
                 print(f" ? {key_name} [{to_name}]: bad email address: {to_address}")
             else:
                 family[key_name] = { "to_name": to_name, "to_address": to_address }
@@ -85,7 +82,7 @@ def get_family_info(family_filename):
 def check_details_and_write_emails(santa_filename, family):
     emails = []
     print("Checking details and writing emails to be sent to...")
-    check2_errors = 0
+    check_errors = 0
     with open(santa_filename, "r") as santa_file:
         reader = csv.reader(santa_file)
         for santa_name, buying_for, recv_name in reader:
@@ -94,9 +91,9 @@ def check_details_and_write_emails(santa_filename, family):
                 emails.append(email)
                 print(f" * {santa_name} at {email['to_address']}")
             else:
-                check2_errors += 1
+                check_errors += 1
                 print(f" ! Can't send to {santa_name} due to email address issue")
-    if check2_errors > 0:
+    if check_errors > 0:
         print()
         print("Errors detected; send halted.")
         exit()
